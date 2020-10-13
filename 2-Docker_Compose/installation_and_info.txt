@@ -1,0 +1,41 @@
+pip3 install docker
+pip3 install docker-compose
+
+docker run hello-world
+
+
+DOCKERFILE EXAMPLE: 
+
+FROM ubuntu:20.04
+
+WORKDIR /usr/src/app
+# Define system variables 
+ENV export HOME=/project
+# Disable prompt during package installation
+ARG DEBIAN_FRONTEND=noninteractive
+# Copy from local system
+COPY environemt.yml
+
+# Install dependencies
+# conda env export --name ENVNAME > envname.yml
+RUN apt-get update -y
+RUN apt-get upgrade -y
+RUN apt-get install -y curl nano wget git tzdata libgl1-mesa-glx libxml2-dev libxslt1-dev antiword unrtf poppler-utils pstotext tesseract-ocr flac ffmpeg lame libmad0 libsox-fmt-mp3 sox libjpeg-dev swig
+RUN wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O $HOME/miniconda.sh && bash $HOME/miniconda.sh -b -p $HOME/miniconda
+RUN echo 'conda activate doc' >> $HOME/.bashrc
+RUN $HOME/miniconda/bin/conda env create --name apis -f environment.yml
+
+# run at start
+CMD ["conda activate apis"]
+CMD ["python3", "app.py"]
+
+# LABEL about the custom image
+LABEL maintainer="felixdittrich92@gmail.com"
+LABEL version="0.1"
+LABEL description="This is custom Docker Image for \
+Flask testing."
+
+
+# BUILD
+# cd 2-Docker_Compose
+# sudo docker-compose build
