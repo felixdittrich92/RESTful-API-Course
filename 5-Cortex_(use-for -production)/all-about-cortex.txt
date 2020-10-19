@@ -1,0 +1,84 @@
+FOR MODEL STORAGE USE: 
+https://dvc.org/doc
+
+and AWS S3 Bucket
+
+
+
+https://www.cortex.dev/
+
+install
+You must have Docker installed to run Cortex locally or to create a cluster on AWS
+
+bash -c "$(curl -sS https://raw.githubusercontent.com/cortexlabs/cortex/0.20/get-cli.sh)"
+
+
+ > Felix Dittrich
+>  21:45 <https://gitter.im/cortexlabs/cortex?at=5f89f85ca7e77a0ff14fe873>
+> Hello :)
+> How can i configure the docker image ? I want to use miniconda as Python
+> Dist and install my dependencies with env.yml so i dont have a
+> requirements.txt Thanks for your help :)
+> Vishal Bollu
+>  22:39 <https://gitter.im/cortexlabs/cortex?at=5f8a0512c990bb1c3911d786>
+> @felixdittrich92 You have a few options:
+>
+>    - You can list the conda packages in a file called conda-packages.txt,
+>    more information here
+>    <https://docs.cortex.dev/advanced/python-packages#conda-packages>
+>    - If you have a more complicated conda env.yaml setup than just a list
+>    of packages, then you can specify a bash script dependencies.sh to
+>    apply your env.yaml because Cortex images already use conda. Make sure
+>    that your env.yaml file is in the same directory as your cortex.yaml file.
+>    Create a bash script called dependencies.sh (make sure to make it
+>    executable chmod +x dependencies.sh). In the dependencies.sh add the
+>    following line conda env create -f env.yaml. The dependencies.sh script
+>    is executed before your API initializes. Be careful about changing the
+>    python version. Cortex serving code currently uses 3.6.9 and is not tested
+>    on other versions of Python.
+>    - If you want to create your own image, the instructions can be found
+>    here
+>    <https://docs.cortex.dev/advanced/system-packages#custom-docker-image>
+>
+> Let us know how it goes!
+>
+Vishal Bollu
+ 23:02 <https://gitter.im/cortexlabs/cortex?at=5f8a0a75bbffc02b581f2eeb>
+@felixdittrich92 a correction.
+For the second option the command conda env create -f env.yaml creates a
+new environment but doesn't apply it so the Cortex web server won't be
+using the new environment you created. The more accurate command is to use
+the command conda env update -f env.yaml --name env to update the existing
+Conda environment used by Cortex rather than creating a new environment.
+The Conda environment used by Cortex is called env so you'll want to use
+and update this environment.
+
+
+EXAMPLE:
+Note: if installed under sudo use sudo cortex
+
+# clone the Cortex repository
+git clone -b 0.20 https://github.com/cortexlabs/cortex.git
+
+# navigate to the Pytorch text generator example
+cd text-generator
+
+# deploy the model as a realtime api
+cortex deploy
+
+# view the status of the api
+cortex get --watch
+
+# stream logs from the api
+cortex logs text-generator
+
+# get the api's endpoint
+cortex get text-generator
+
+# classify a sample
+curl <API endpoint> \
+  -X POST -H "Content-Type: application/json" \
+  -d '{"text": "machine learning is"}' \
+
+# delete the api
+cortex delete text-generator
