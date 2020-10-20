@@ -1,0 +1,9 @@
+https://www.streamlit.io/
+
+
+to create fast lightweight apps for Machine Learning and Deep Learning
+
+pip3 install streamlit
+streamlit hello
+
+streamlit run your_script.py [-- script args]

@@ -1,0 +1,9 @@
+Copied from udemy course: 
+https://www.udemy.com/course/python-rest-apis-with-flask-docker-mongodb-and-aws-devops/
+
+- ugly code 
+- some bugs 
+- only as a reference work
+
+
+Cortex and Streamlit are own tests
